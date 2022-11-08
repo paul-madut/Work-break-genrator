@@ -45,27 +45,33 @@ def ShiftLength(startTime, endTime):
 
 
 def MakeBreaks(currWorker,breakLength):
+    print(breakLength)
     if breakLength == 0:
         return
+
+    elif breakLength >= 60:
+        currWorker.break1 = True
+        MakeBreaks(currWorker, breakLength - 15)
+
+    elif breakLength >= 30:
+        if currWorker.break1 == None:
+            currWorker.lunch = True
+        else:
+            currWorker.lunch = True
+        MakeBreaks(currWorker, breakLength - 30)
+
     elif breakLength <= 15:
 
         if currWorker.break1 == None:
-            currWorker.break1 = currWorker.start + datetime.timedelta(hours=2)
+            currWorker.break1 = True
         else:
-            currWorker.break2 = currWorker.start + datetime.timedelta(hours=2)
+            currWorker.break2 = True
         MakeBreaks(currWorker,breakLength-15)
 
-    elif breakLength <= 30:
-        if currWorker.break1 == None:
-            currWorker.lunch = currWorker.start + datetime.timedelta(hours=2)
-        else:
-            currWorker.lunch = currWorker.break1 + datetime.timedelta(hours=2)
-        MakeBreaks(currWorker, breakLength - 30)
-
-    elif breakLength <= 60:
-        currWorker.lunch = currWorker.start + datetime.timedelta(hours=2)
-        MakeBreaks(currWorker, breakLength - 30)
-
+def BreakOrder(Worker):
+    if Worker.start.time() <= datetime.time(12,0) and Worker.break1 == True and Worker.break2 == None:
+        Worker.break1 = None
+        Worker.break2 = True
 
 
 time_format = "%H:%M%p"
@@ -88,9 +94,10 @@ while(flag):
 
     WorkingToday2.append(Worker(Employees[worker-1],startTime,endTime))
 
-    print(ShiftLength(startTime,endTime))
+
 
     MakeBreaks(WorkingToday2[counter],BreakLength(ShiftLength(startTime,endTime)))
+    BreakOrder(WorkingToday2[counter])
     counter+=1
 
 for x in WorkingToday2:
