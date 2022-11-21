@@ -14,12 +14,7 @@ class Worker:
     def __str__(self):
         return f"{self.name}      {self.break1}     {self.lunch}     {self.break2}"
 
-Employees =['Maricel W','Prabh k','Abigail D',
-            'Emer L','Troy M','Marissa B',
-            'Salma H','Bessan A','Nour B',
-            'Salma Z','Ewen J','Jeannice D',
-            'Jopeph P','Annalyn F','Mariceli C',
-            'Dragan K-K','Annabelle B','Lauren G',
+Employees =['Bob A',
             'Paul M']
 
 Employees2 = ["{}. {}".format(x+1,Employees[x]) for x in range(len(Employees))]
