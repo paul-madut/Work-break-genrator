@@ -77,10 +77,33 @@ def amPm(formattedTime):
         time += datetime.timedelta(hours=12)
     return time
 
-def breakTimes(Workers):
+def breakTimes(Workers,breakConflicts):
     for x in Workers:
-        if x.break1 == True:
-            
+        if x.break1 == True and x.break1 not in breakConflicts:
+            x.break1 = x.lastBreak + datetime.timedelta(hours=2)
+            x.lastBreak =x.break1
+            for y in range(15):
+                breakConflicts.append(x.break1 + datetime.timedelta(minutes=y))
+            return breakConflicts
+        elif x.break1 in breakConflicts:
+            x.break1 = x.lastBreak + datetime.timedelta(hours=2, minutes=15)
+            x.lastBreak = x.break1
+            for y in range(15):
+                breakConflicts.append(x.break1 + datetime.timedelta(minutes=y))
+
+        for x in Workers:
+            if x.break2 == True and x.break2 not in breakConflicts:
+                x.break2 = x.lastBreak + datetime.timedelta(hours=2)
+                x.lastBreak = x.break2
+                for y in range(15):
+                    breakConflicts.append(x.break2 + datetime.timedelta(minutes=y))
+            elif x.break2 == True and x.break2 in breakConflicts:
+                x.break2 = x.lastBreak + datetime.timedelta(hours=2, minutes=15)
+                x.lastBreak = x.break2
+                for y in range(15):
+                    breakConflicts.append(x.break2 + datetime.timedelta(minutes=y))
+
+    return breakConflicts
 
 
 """
@@ -118,5 +141,16 @@ endTime = amPm(endTime)
 WorkingToday2.append(Worker("bob a",startTime,endTime))
 MakeBreaks(WorkingToday2[0],BreakLength(ShiftLength(startTime,endTime)))
 BreakOrder(WorkingToday2[0])
-for x in WorkingToday2:
+breakTimes(WorkingToday2,breakConflicts)
+
+breakConflicts = breakTimes(WorkingToday2,breakConflicts)
+for x in breakConflicts:
     print(x)
+
+WorkingToday2.append(Worker("pete c",startTime,endTime))
+MakeBreaks(WorkingToday2[1],BreakLength(ShiftLength(startTime,endTime)))
+BreakOrder(WorkingToday2[1])
+breakTimes(WorkingToday2,breakConflicts)
+
+
+
