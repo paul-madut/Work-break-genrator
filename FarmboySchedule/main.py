@@ -11,6 +11,8 @@ class Worker:
         self.break2 = None
         self.lunch = None
 
+        self.lastBreak = startTime
+
     def __str__(self):
         return f"{self.name}      {self.break1}     {self.lunch}     {self.break2}"
 
@@ -20,6 +22,7 @@ Employees =['Bob A',
 Employees2 = ["{}. {}".format(x+1,Employees[x]) for x in range(len(Employees))]
 WorkingToday = []
 WorkingToday2 = []
+breakConflicts = []
 
 
 def BreakLength(shiftLength):
@@ -36,8 +39,6 @@ def ShiftLength(startTime, endTime):
     delta  = (endTime - startTime).total_seconds()
     delta /= 60*60
     return delta
-
-
 
 def MakeBreaks(currWorker,breakLength):
     print(breakLength)
@@ -64,16 +65,29 @@ def MakeBreaks(currWorker,breakLength):
         MakeBreaks(currWorker,breakLength-15)
 
 def BreakOrder(Worker):
-    if Worker.start.time() <= datetime.time(12,0) and Worker.break1 == True and Worker.break2 == None:
+    if Worker.start.time() >= datetime.time(12,0) and Worker.break1 == True and Worker.break2 == None:
         Worker.break1 = None
         Worker.break2 = True
+    print(Worker.start)
+
+def amPm(formattedTime):
+    time_format = "%H:%M%p"
+    time = datetime.datetime.strptime(formattedTime, time_format)
+    if "pm" in formattedTime and time.hour != 12:
+        time += datetime.timedelta(hours=12)
+    return time
+
+def breakTimes(Workers):
+    for x in Workers:
+        if x.break1 == True:
+            
 
 
-time_format = "%H:%M%p"
+"""
 flag = True
 print("Welcome to the Schedule Maker 2000! \n To exit the program type -1")
-
 counter = 0
+
 while(flag):
     worker = int(input("Who is working today? "))
     if worker == -1:
@@ -94,6 +108,15 @@ while(flag):
     MakeBreaks(WorkingToday2[counter],BreakLength(ShiftLength(startTime,endTime)))
     BreakOrder(WorkingToday2[counter])
     counter+=1
+"""
 
+startTime  = "8:00am"
+startTime = amPm(startTime)
+endTime  = "12:30pm"
+endTime = amPm(endTime)
+
+WorkingToday2.append(Worker("bob a",startTime,endTime))
+MakeBreaks(WorkingToday2[0],BreakLength(ShiftLength(startTime,endTime)))
+BreakOrder(WorkingToday2[0])
 for x in WorkingToday2:
     print(x)
