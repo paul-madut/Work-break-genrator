@@ -41,7 +41,6 @@ def ShiftLength(startTime, endTime):
     return delta
 
 def MakeBreaks(currWorker,breakLength):
-    print(breakLength)
     if breakLength == 0:
         return
 
@@ -68,7 +67,7 @@ def BreakOrder(Worker):
     if Worker.start.time() >= datetime.time(12,0) and Worker.break1 == True and Worker.break2 == None:
         Worker.break1 = None
         Worker.break2 = True
-    print(Worker.start)
+
 
 def amPm(formattedTime):
     time_format = "%H:%M%p"
@@ -77,33 +76,22 @@ def amPm(formattedTime):
         time += datetime.timedelta(hours=12)
     return time
 
-def breakTimes(Workers,breakConflicts):
-    for x in Workers:
-        if x.break1 == True and x.break1 not in breakConflicts:
+def breakTimes(Worker,breakCon):
+        x = Worker
+        if x.break1 == True:
             x.break1 = x.lastBreak + datetime.timedelta(hours=2)
-            x.lastBreak =x.break1
             for y in range(15):
-                breakConflicts.append(x.break1 + datetime.timedelta(minutes=y))
+                breakCon.append(x.break1 + datetime.timedelta(minutes=y))
+            return breakConflicts
+        elif x.break1 == None:
             return breakConflicts
         elif x.break1 in breakConflicts:
-            x.break1 = x.lastBreak + datetime.timedelta(hours=2, minutes=15)
-            x.lastBreak = x.break1
+            x.break1 += datetime.timedelta(minutes=15)
             for y in range(15):
-                breakConflicts.append(x.break1 + datetime.timedelta(minutes=y))
+                breakCon.append(x.break1 + datetime.timedelta(minutes=y))
 
-        for x in Workers:
-            if x.break2 == True and x.break2 not in breakConflicts:
-                x.break2 = x.lastBreak + datetime.timedelta(hours=2)
-                x.lastBreak = x.break2
-                for y in range(15):
-                    breakConflicts.append(x.break2 + datetime.timedelta(minutes=y))
-            elif x.break2 == True and x.break2 in breakConflicts:
-                x.break2 = x.lastBreak + datetime.timedelta(hours=2, minutes=15)
-                x.lastBreak = x.break2
-                for y in range(15):
-                    breakConflicts.append(x.break2 + datetime.timedelta(minutes=y))
 
-    return breakConflicts
+        return breakCon
 
 
 """
@@ -143,14 +131,22 @@ MakeBreaks(WorkingToday2[0],BreakLength(ShiftLength(startTime,endTime)))
 BreakOrder(WorkingToday2[0])
 breakTimes(WorkingToday2,breakConflicts)
 
-breakConflicts = breakTimes(WorkingToday2,breakConflicts)
 for x in breakConflicts:
     print(x)
+print("----------------------------------")
+breakConflicts = breakTimes(WorkingToday2,breakConflicts)
+
+
 
 WorkingToday2.append(Worker("pete c",startTime,endTime))
 MakeBreaks(WorkingToday2[1],BreakLength(ShiftLength(startTime,endTime)))
 BreakOrder(WorkingToday2[1])
 breakTimes(WorkingToday2,breakConflicts)
 
+for x in breakConflicts:
+    print(x)
+
+for x in WorkingToday2:
+     print(x)
 
 
