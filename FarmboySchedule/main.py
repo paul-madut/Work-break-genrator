@@ -76,22 +76,46 @@ def amPm(formattedTime):
         time += datetime.timedelta(hours=12)
     return time
 
-def breakTimes(Worker,breakCon):
-        x = Worker
-        if x.break1 == True:
-            x.break1 = x.lastBreak + datetime.timedelta(hours=2)
-            for y in range(15):
-                breakCon.append(x.break1 + datetime.timedelta(minutes=y))
-            return breakConflicts
-        elif x.break1 == None:
-            return breakConflicts
-        elif x.break1 in breakConflicts:
-            x.break1 += datetime.timedelta(minutes=15)
-            for y in range(15):
-                breakCon.append(x.break1 + datetime.timedelta(minutes=y))
+def breakTimes(Worker):
+    # Break 1
+        if type(Worker.break1) == bool and Worker.break1 and Worker.lastBreak + datetime.timedelta(hours=2) not in breakConflicts:
+            Worker.break1 = Worker.lastBreak + datetime.timedelta(hours=2)
+            Worker.lastBreak = Worker.break1
+            for x in range(15):
+                breakConflicts.append(Worker.break1 + datetime.timedelta(minutes = x))
+        elif type(Worker.break1) == bool and Worker.break1 and Worker.lastBreak + datetime.timedelta(hours=2) in breakConflicts:
+            Worker.break1 =Worker.lastBreak + datetime.timedelta(hours=2) + datetime.timedelta(minutes=15)
+            Worker.lastBreak = Worker.break1
+            for x in range(15):
+                breakConflicts.append(Worker.break1 + datetime.timedelta(minutes=x))
+
+        # Break 2
+        if type(Worker.break2) == bool and Worker.break2 and Worker.lastBreak + datetime.timedelta(hours=2) not in breakConflicts:
+            Worker.break2 = Worker.lastBreak + datetime.timedelta(hours=2)
+            Worker.lastBreak = Worker.break2
+            for x in range(15):
+                breakConflicts.append(Worker.break2 + datetime.timedelta(minutes = x))
+        elif type(Worker.break2) == bool and Worker.break2 and Worker.lastBreak + datetime.timedelta(hours=2) in breakConflicts:
+            Worker.break2 =Worker.lastBreak + datetime.timedelta(hours=2) + datetime.timedelta(minutes=15)
+            Worker.lastBreak = Worker.break2
+            for x in range(15):
+                breakConflicts.append(Worker.break2 + datetime.timedelta(minutes=x))
+
+        # Lunch
+        if type(Worker.lunch) == bool and Worker.lunch and Worker.lastBreak + datetime.timedelta(hours=2) not in breakConflicts:
+            Worker.lunch = Worker.lastBreak + datetime.timedelta(hours=2)
+            Worker.lastBreak = Worker.lunch
+            for x in range(30):
+                breakConflicts.append(Worker.lunch + datetime.timedelta(minutes = x))
+        elif type(Worker.lunch) == bool and Worker.lunch and Worker.lastBreak + datetime.timedelta(hours=2) in breakConflicts:
+            Worker.lunch =Worker.lastBreak + datetime.timedelta(hours=2) + datetime.timedelta(minutes=15)
+            Worker.lastBreak = Worker.lunch
+            for x in range(30):
+                breakConflicts.append(Worker.lunch + datetime.timedelta(minutes=x))
 
 
-        return breakCon
+
+        return
 
 
 """
@@ -121,27 +145,31 @@ while(flag):
     counter+=1
 """
 
-startTime  = "8:00am"
+startTime  = "2:00pm"
 startTime = amPm(startTime)
-endTime  = "12:30pm"
+endTime  = "4:30pm"
 endTime = amPm(endTime)
 
 WorkingToday2.append(Worker("bob a",startTime,endTime))
 MakeBreaks(WorkingToday2[0],BreakLength(ShiftLength(startTime,endTime)))
 BreakOrder(WorkingToday2[0])
-breakTimes(WorkingToday2,breakConflicts)
+breakTimes(WorkingToday2[0])
 
 for x in breakConflicts:
     print(x)
 print("----------------------------------")
-breakConflicts = breakTimes(WorkingToday2,breakConflicts)
 
 
+startTime1  = "1:00pm"
+startTime1 = amPm(startTime1)
+endTime1  = "6:30pm"
+endTime1 = amPm(endTime1)
 
-WorkingToday2.append(Worker("pete c",startTime,endTime))
-MakeBreaks(WorkingToday2[1],BreakLength(ShiftLength(startTime,endTime)))
+
+WorkingToday2.append(Worker("pete c",startTime1,endTime1))
+MakeBreaks(WorkingToday2[1],BreakLength(ShiftLength(startTime1,endTime1)))
 BreakOrder(WorkingToday2[1])
-breakTimes(WorkingToday2,breakConflicts)
+breakTimes(WorkingToday2[1])
 
 for x in breakConflicts:
     print(x)
