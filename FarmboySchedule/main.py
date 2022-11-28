@@ -4,7 +4,7 @@ import datetime
 from twilio.rest import Client
 import sqlite3
 
-connection = sqlite3.connect("employees.db")
+
 
 account_sid = 'AC48f54b1fc2e0f214851b67e491c1be88'
 auth_token = '[Redacted]'
@@ -72,18 +72,38 @@ class Worker:
             self.lunch = str(self.lunch) + "|" + str(lunchEnd)
 
 
-Employees =['Maricel W','Prabh k','Abigail D',
-            'Emer L','Troy M','Marissa B',
-            'Salma H','Bessan A','Nour B',
-            'Salma Z','Ewen J','Jeannice D',
-            'Jopeph P','Annalyn F','Mariceli C',
-            'Dragan K-K','Annabelle B','Lauren G',
-            'Paul M']
 
-Employees2 = ["{}. {}".format(x+1,Employees[x]) for x in range(len(Employees))]
 WorkingToday = []
 WorkingToday2 = []
 breakConflicts = []
+
+# database things
+connection = sqlite3.connect("employees.db")
+
+cursor = connection.cursor()
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS Employees(
+number INTEGER,
+name TEXT
+)
+""")
+"""
+cursor.execute("""
+#INSERT INTO Employees VALUES
+""" +
+               employeeInfo
+
+)
+"""
+cursor.execute("""
+SELECT * FROM Employees
+""")
+rows = cursor.fetchall()
+Employees2 = ["{}. {}".format(rows[x][0],rows[x][1]) for x in range(len(rows))]
+
+connection.commit()
+
+connection.close()
 
 
 def BreakLength(shiftLength):
@@ -205,7 +225,7 @@ while(flag):
         break
     else:
         try:
-            WorkingToday.append(Employees[worker-1])
+            WorkingToday.append(Employees2[worker-1])
             del Employees2[worker - 1]
         except IndexError:
             print("Enter a valid employee")
@@ -225,13 +245,7 @@ while(flag):
         print("Please enter a endTime valid time")
         continue
 
-
-
-    WorkingToday2.append(Worker(Employees[worker-1],startTime,endTime))
-
-
-
-
+    WorkingToday2.append(Worker(Employees2[worker-1],startTime,endTime))
     MakeBreaks(WorkingToday2[counter],BreakLength(ShiftLength(startTime,endTime)))
     BreakOrder(WorkingToday2[counter])
     breakTimes(WorkingToday2[counter])
