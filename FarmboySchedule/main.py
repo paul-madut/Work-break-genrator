@@ -2,9 +2,12 @@
 
 import datetime
 from twilio.rest import Client
+import sqlite3
+
+connection = sqlite3.connect("employees.db")
 
 account_sid = 'AC48f54b1fc2e0f214851b67e491c1be88'
-auth_token = 'b15bdafe418fc6260adac9ae12be2ba5'
+auth_token = '[Redacted]'
 client = Client(account_sid, auth_token)
 
 
@@ -237,11 +240,14 @@ while(flag):
 
 for x in WorkingToday2:
     x.MakePretty()
+    print(x)
+    """
     message = client.messages.create(
         messaging_service_sid='MG835442ee15df88dd2018d4a8c1c04b29',
         body=x,
         to='+16139814476'
     )
+    """
 
 print("done")
 
