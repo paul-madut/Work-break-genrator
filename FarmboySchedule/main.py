@@ -21,7 +21,7 @@ class Worker:
         if self.lunch == None:
             self.lunch = ""
 
-        text = "{}|{:<16}|{:^16}|{:>16}"
+        text = "{} |{:<16}|{:^16}|{:>16}"
         return text.format(self.name,self.break1,self.lunch,self.break2)
 
     def MakePretty(self):
@@ -184,16 +184,37 @@ counter = 0
 while(flag):
     for x in Employees2:
         print(x)
-    worker = int(input("Who is working today? "))
+    try:
+        worker = int(input("Who is working today? "))
+    except Exception:
+        print("Please enter a valid employee")
+        continue
+
+
     if worker == -1:
         break
     else:
-        WorkingToday.append(Employees[worker-1])
-        del Employees2[worker-1]
-    startTime  = "11:00am" #input("What time do they start? (hh:mm): ")
-    startTime = amPm(startTime)
-    endTime  = "7:30pm" #input("What time do they end? (hh:mm): ")
-    endTime = amPm(endTime)
+        try:
+            WorkingToday.append(Employees[worker-1])
+            del Employees2[worker - 1]
+        except IndexError:
+            print("Enter a valid employee")
+            continue
+
+    try:
+        startTime  = str(input("What time do they start? (hh:mm): "))
+        startTime = amPm(startTime)
+    except Exception:
+        print("Please enter a start valid time")
+        continue
+
+    try:
+        endTime  = str(input("What time do they end? (hh:mm): "))
+        endTime = amPm(endTime)
+    except Exception:
+        print("Please enter a endTime valid time")
+        continue
+
 
 
     WorkingToday2.append(Worker(Employees[worker-1],startTime,endTime))
