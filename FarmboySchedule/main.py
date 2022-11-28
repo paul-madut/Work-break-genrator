@@ -14,7 +14,37 @@ class Worker:
         self.lastBreak = startTime
 
     def __str__(self):
-        return f"{self.name}      {self.break1}     {self.lunch}     {self.break2}"
+        if self.break1 == None:
+            self.break1 = ""
+        if self.break2 == None:
+            self.break2 = ""
+        if self.lunch == None:
+            self.lunch = ""
+
+        text = "{}|{:<16}|{:^16}|{:>16}"
+        return text.format(self.name,self.break1,self.lunch,self.break2)
+
+    def MakePretty(self):
+        time_format = "%H:%M%p"
+
+        if self.break1 != None:
+            break1end = self.break1 + datetime.timedelta(minutes = 15)
+            self.break1 = datetime.datetime.strftime(self.break1, time_format)
+            break1end = datetime.datetime.strftime(break1end, time_format)
+            self.break1 = str(self.break1) + "|" + str(break1end)
+
+        if self.break2 != None:
+            break2end = self.break2 + datetime.timedelta(minutes = 15)
+            self.break2 = datetime.datetime.strftime(self.break2, time_format)
+            break2end = datetime.datetime.strftime(break2end, time_format)
+            self.break2 = str(self.break2) + "|" + str(break2end)
+
+        if self.lunch != None:
+            lunchend = self.lunch + datetime.timedelta(minutes = 30)
+            self.lunch = datetime.datetime.strftime(self.lunch, time_format)
+            lunchend = datetime.datetime.strftime(lunchend, time_format)
+            self.lunch = str(self.lunch) + "|" + str(lunchend)
+
 
 Employees =['Bob A',
             'Paul M']
@@ -112,13 +142,10 @@ def breakTimes(Worker):
             Worker.lastBreak = Worker.lunch
             for x in range(30):
                 breakConflicts.append(Worker.lunch + datetime.timedelta(minutes=x))
-
-
-
         return
 
 
-"""
+
 flag = True
 print("Welcome to the Schedule Maker 2000! \n To exit the program type -1")
 counter = 0
@@ -131,9 +158,9 @@ while(flag):
         WorkingToday.append(Employees[worker-1])
         del Employees2[worker-1]
     startTime  = input("What time do they start? (hh:mm): ")
-    startTime = datetime.datetime.strptime(startTime, time_format)
+    startTime = amPm(startTime)
     endTime  = input("What time do they end? (hh:mm): ")
-    endTime = datetime.datetime.strptime(endTime, time_format)
+    endTime = amPm(endTime)
 
 
     WorkingToday2.append(Worker(Employees[worker-1],startTime,endTime))
@@ -142,39 +169,12 @@ while(flag):
 
     MakeBreaks(WorkingToday2[counter],BreakLength(ShiftLength(startTime,endTime)))
     BreakOrder(WorkingToday2[counter])
+    breakTimes(WorkingToday2[counter])
     counter+=1
-"""
 
-startTime  = "2:00pm"
-startTime = amPm(startTime)
-endTime  = "4:30pm"
-endTime = amPm(endTime)
-
-WorkingToday2.append(Worker("bob a",startTime,endTime))
-MakeBreaks(WorkingToday2[0],BreakLength(ShiftLength(startTime,endTime)))
-BreakOrder(WorkingToday2[0])
-breakTimes(WorkingToday2[0])
-
-for x in breakConflicts:
-    print(x)
-print("----------------------------------")
-
-
-startTime1  = "1:00pm"
-startTime1 = amPm(startTime1)
-endTime1  = "6:30pm"
-endTime1 = amPm(endTime1)
-
-
-WorkingToday2.append(Worker("pete c",startTime1,endTime1))
-MakeBreaks(WorkingToday2[1],BreakLength(ShiftLength(startTime1,endTime1)))
-BreakOrder(WorkingToday2[1])
-breakTimes(WorkingToday2[1])
-
-for x in breakConflicts:
-    print(x)
 
 for x in WorkingToday2:
-     print(x)
+    x.MakePretty()
+    print(x)
 
 
