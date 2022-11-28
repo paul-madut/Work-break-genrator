@@ -166,7 +166,6 @@ def amPm2(unformattedTime):
         time= time.replace("AM","PM")
     return time
 
-
 def breakTimes(Worker):
     # Break 1
         if type(Worker.break1) == bool and Worker.break1 and Worker.lastBreak + datetime.timedelta(hours=2) not in breakConflicts:
@@ -250,7 +249,6 @@ while(flag):
     BreakOrder(WorkingToday2[counter])
     breakTimes(WorkingToday2[counter])
     counter+=1
-
 
 for x in WorkingToday2:
     x.MakePretty()
