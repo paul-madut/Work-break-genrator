@@ -27,26 +27,47 @@ class Worker:
     def MakePretty(self):
         time_format = "%H:%M%p"
 
+
         if self.break1 != None:
-            break1end = self.break1 + datetime.timedelta(minutes = 15)
+            break1End = self.break1 + datetime.timedelta(minutes = 15)
             self.break1 = datetime.datetime.strftime(self.break1, time_format)
-            break1end = datetime.datetime.strftime(break1end, time_format)
-            self.break1 = str(self.break1) + "|" + str(break1end)
+            break1End = datetime.datetime.strftime(break1End, time_format)
+            break1End = amPm(break1End)
+            break1End= amPm2(break1End)
+            self.break1 = amPm(self.break1)
+            self.break1 = amPm2(self.break1)
+
+            self.break1 = str(self.break1) + "|" + str(break1End)
 
         if self.break2 != None:
-            break2end = self.break2 + datetime.timedelta(minutes = 15)
+            break2End = self.break2 + datetime.timedelta(minutes = 15)
             self.break2 = datetime.datetime.strftime(self.break2, time_format)
-            break2end = datetime.datetime.strftime(break2end, time_format)
-            self.break2 = str(self.break2) + "|" + str(break2end)
+            break2End = datetime.datetime.strftime(break2End, time_format)
+            break2End = amPm(break2End)
+            break2End = amPm2(break2End)
+            self.break2 = amPm(self.break2)
+            self.break2 = amPm2(self.break2)
+
+            self.break2 = str(self.break2) + "|" + str(break2End)
 
         if self.lunch != None:
-            lunchend = self.lunch + datetime.timedelta(minutes = 30)
+            lunchEnd = self.lunch + datetime.timedelta(minutes = 30)
             self.lunch = datetime.datetime.strftime(self.lunch, time_format)
-            lunchend = datetime.datetime.strftime(lunchend, time_format)
-            self.lunch = str(self.lunch) + "|" + str(lunchend)
+            lunchEnd = datetime.datetime.strftime(lunchEnd, time_format)
+            lunchEnd = amPm(lunchEnd)
+            lunchEnd = amPm2(lunchEnd)
+            self.lunch = amPm(self.lunch)
+            self.lunch = amPm2(self.lunch)
+
+            self.lunch = str(self.lunch) + "|" + str(lunchEnd)
 
 
-Employees =['Bob A',
+Employees =['Maricel W','Prabh k','Abigail D',
+            'Emer L','Troy M','Marissa B',
+            'Salma H','Bessan A','Nour B',
+            'Salma Z','Ewen J','Jeannice D',
+            'Jopeph P','Annalyn F','Mariceli C',
+            'Dragan K-K','Annabelle B','Lauren G',
             'Paul M']
 
 Employees2 = ["{}. {}".format(x+1,Employees[x]) for x in range(len(Employees))]
@@ -106,6 +127,16 @@ def amPm(formattedTime):
         time += datetime.timedelta(hours=12)
     return time
 
+def amPm2(unformattedTime):
+    time_format = "%H:%M%p"
+    time = datetime.datetime.strftime(unformattedTime, time_format)
+    if unformattedTime.hour > 12:
+        unformattedTime += datetime.timedelta(hours=12)
+        time = datetime.datetime.strftime(unformattedTime, time_format)
+        time= time.replace("AM","PM")
+    return time
+
+
 def breakTimes(Worker):
     # Break 1
         if type(Worker.break1) == bool and Worker.break1 and Worker.lastBreak + datetime.timedelta(hours=2) not in breakConflicts:
@@ -151,19 +182,22 @@ print("Welcome to the Schedule Maker 2000! \n To exit the program type -1")
 counter = 0
 
 while(flag):
+    for x in Employees2:
+        print(x)
     worker = int(input("Who is working today? "))
     if worker == -1:
         break
     else:
         WorkingToday.append(Employees[worker-1])
         del Employees2[worker-1]
-    startTime  = input("What time do they start? (hh:mm): ")
+    startTime  = "11:00am" #input("What time do they start? (hh:mm): ")
     startTime = amPm(startTime)
-    endTime  = input("What time do they end? (hh:mm): ")
+    endTime  = "7:30pm" #input("What time do they end? (hh:mm): ")
     endTime = amPm(endTime)
 
 
     WorkingToday2.append(Worker(Employees[worker-1],startTime,endTime))
+
 
 
 
