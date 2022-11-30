@@ -4,12 +4,11 @@ import datetime
 from twilio.rest import Client
 import sqlite3
 
-
-
+# Twilio Api
+# Fill in auth_token with you actual auth token
 account_sid = 'AC48f54b1fc2e0f214851b67e491c1be88'
 auth_token = '[Redacted]'
 client = Client(account_sid, auth_token)
-
 
 class Worker:
     def __init__(self, name, startTime, endTime):
@@ -34,9 +33,8 @@ class Worker:
         text = "{} |{:<16}|{:^16}|{:>16}"
         return text.format(self.name,self.break1,self.lunch,self.break2)
 
-    def MakePretty(self):
+    def MakePretty(self)-> None:
         time_format = "%H:%M%p"
-
 
         if self.break1 != None:
             break1End = self.break1 + datetime.timedelta(minutes = 15)
@@ -99,14 +97,14 @@ cursor.execute("""
 SELECT * FROM Employees
 """)
 rows = cursor.fetchall()
+
 Employees2 = ["{}. {}".format(rows[x][0],rows[x][1]) for x in range(len(rows))]
+Employees = [x for x in Employees2]
 
 connection.commit()
-
 connection.close()
 
-
-def BreakLength(shiftLength):
+def BreakLength(shiftLength:int)-> int:
     if shiftLength <= 5:
         return 15
     elif shiftLength <=6.5:
@@ -116,12 +114,12 @@ def BreakLength(shiftLength):
     elif shiftLength > 8:
         return 60
 
-def ShiftLength(startTime, endTime):
+def ShiftLength(startTime:datetime, endTime:datetime)-> int:
     delta  = (endTime - startTime).total_seconds()
     delta /= 60*60
     return delta
 
-def MakeBreaks(currWorker,breakLength):
+def MakeBreaks(currWorker:Worker,breakLength:int)->None:
     if breakLength == 0:
         return
 
@@ -144,20 +142,20 @@ def MakeBreaks(currWorker,breakLength):
             currWorker.break2 = True
         MakeBreaks(currWorker,breakLength-15)
 
-def BreakOrder(Worker):
-    if Worker.start.time() >= datetime.time(12,0) and Worker.break1 == True and Worker.break2 == None:
-        Worker.break1 = None
-        Worker.break2 = True
+def BreakOrder(worker:Worker)-> None:
+    if worker.start.time() >= datetime.time(12,0) and worker.break1 == True and worker.break2 == None:
+        worker.break1 = None
+        worker.break2 = True
 
 
-def amPm(formattedTime):
+def amPm(formattedTime:str)-> datetime:
     time_format = "%H:%M%p"
     time = datetime.datetime.strptime(formattedTime, time_format)
     if "pm" in formattedTime and time.hour != 12:
         time += datetime.timedelta(hours=12)
     return time
 
-def amPm2(unformattedTime):
+def amPm2(unformattedTime:datetime)-> str:
     time_format = "%H:%M%p"
     time = datetime.datetime.strftime(unformattedTime, time_format)
     if unformattedTime.hour > 12:
@@ -166,42 +164,42 @@ def amPm2(unformattedTime):
         time= time.replace("AM","PM")
     return time
 
-def breakTimes(Worker):
+def breakTimes(worker:Worker)-> None:
     # Break 1
-        if type(Worker.break1) == bool and Worker.break1 and Worker.lastBreak + datetime.timedelta(hours=2) not in breakConflicts:
-            Worker.break1 = Worker.lastBreak + datetime.timedelta(hours=2)
-            Worker.lastBreak = Worker.break1
+        if type(worker.break1) == bool and worker.break1 and worker.lastBreak + datetime.timedelta(hours=2) not in breakConflicts:
+            worker.break1 = worker.lastBreak + datetime.timedelta(hours=2)
+            worker.lastBreak = worker.break1
             for x in range(15):
-                breakConflicts.append(Worker.break1 + datetime.timedelta(minutes = x))
-        elif type(Worker.break1) == bool and Worker.break1 and Worker.lastBreak + datetime.timedelta(hours=2) in breakConflicts:
-            Worker.break1 =Worker.lastBreak + datetime.timedelta(hours=2) + datetime.timedelta(minutes=15)
-            Worker.lastBreak = Worker.break1
+                breakConflicts.append(worker.break1 + datetime.timedelta(minutes = x))
+        elif type(worker.break1) == bool and worker.break1 and worker.lastBreak + datetime.timedelta(hours=2) in breakConflicts:
+            worker.break1 =worker.lastBreak + datetime.timedelta(hours=2) + datetime.timedelta(minutes=15)
+            worker.lastBreak = worker.break1
             for x in range(15):
-                breakConflicts.append(Worker.break1 + datetime.timedelta(minutes=x))
+                breakConflicts.append(worker.break1 + datetime.timedelta(minutes=x))
 
         # Break 2
-        if type(Worker.break2) == bool and Worker.break2 and Worker.lastBreak + datetime.timedelta(hours=2) not in breakConflicts:
-            Worker.break2 = Worker.lastBreak + datetime.timedelta(hours=2)
-            Worker.lastBreak = Worker.break2
+        if type(worker.break2) == bool and worker.break2 and worker.lastBreak + datetime.timedelta(hours=2) not in breakConflicts:
+            worker.break2 = worker.lastBreak + datetime.timedelta(hours=2)
+            worker.lastBreak = worker.break2
             for x in range(15):
-                breakConflicts.append(Worker.break2 + datetime.timedelta(minutes = x))
-        elif type(Worker.break2) == bool and Worker.break2 and Worker.lastBreak + datetime.timedelta(hours=2) in breakConflicts:
-            Worker.break2 =Worker.lastBreak + datetime.timedelta(hours=2) + datetime.timedelta(minutes=15)
-            Worker.lastBreak = Worker.break2
+                breakConflicts.append(worker.break2 + datetime.timedelta(minutes = x))
+        elif type(worker.break2) == bool and worker.break2 and worker.lastBreak + datetime.timedelta(hours=2) in breakConflicts:
+            worker.break2 =worker.lastBreak + datetime.timedelta(hours=2) + datetime.timedelta(minutes=15)
+            worker.lastBreak = worker.break2
             for x in range(15):
-                breakConflicts.append(Worker.break2 + datetime.timedelta(minutes=x))
+                breakConflicts.append(worker.break2 + datetime.timedelta(minutes=x))
 
         # Lunch
-        if type(Worker.lunch) == bool and Worker.lunch and Worker.lastBreak + datetime.timedelta(hours=2) not in breakConflicts:
-            Worker.lunch = Worker.lastBreak + datetime.timedelta(hours=2)
-            Worker.lastBreak = Worker.lunch
+        if type(worker.lunch) == bool and worker.lunch and worker.lastBreak + datetime.timedelta(hours=2) not in breakConflicts:
+            worker.lunch = worker.lastBreak + datetime.timedelta(hours=2)
+            worker.lastBreak = worker.lunch
             for x in range(30):
-                breakConflicts.append(Worker.lunch + datetime.timedelta(minutes = x))
-        elif type(Worker.lunch) == bool and Worker.lunch and Worker.lastBreak + datetime.timedelta(hours=2) in breakConflicts:
-            Worker.lunch =Worker.lastBreak + datetime.timedelta(hours=2) + datetime.timedelta(minutes=15)
-            Worker.lastBreak = Worker.lunch
+                breakConflicts.append(worker.lunch + datetime.timedelta(minutes = x))
+        elif type(worker.lunch) == bool and worker.lunch and worker.lastBreak + datetime.timedelta(hours=2) in breakConflicts:
+            worker.lunch = worker.lastBreak + datetime.timedelta(hours=2) + datetime.timedelta(minutes=15)
+            worker.lastBreak = worker.lunch
             for x in range(30):
-                breakConflicts.append(Worker.lunch + datetime.timedelta(minutes=x))
+                breakConflicts.append(worker.lunch + datetime.timedelta(minutes=x))
         return
 
 
@@ -244,7 +242,7 @@ while(flag):
         print("Please enter a endTime valid time")
         continue
 
-    WorkingToday2.append(Worker(Employees2[worker-1],startTime,endTime))
+    WorkingToday2.append(Worker(Employees[worker-1],startTime,endTime))
     MakeBreaks(WorkingToday2[counter],BreakLength(ShiftLength(startTime,endTime)))
     BreakOrder(WorkingToday2[counter])
     breakTimes(WorkingToday2[counter])
