@@ -262,6 +262,3 @@ for x in WorkingToday2:
     """
 
 print("done")
-
-
-
