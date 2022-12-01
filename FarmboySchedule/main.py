@@ -259,5 +259,3 @@ for x in WorkingToday2:
         to='+16139814476'
     )
     """
-
-print("done")
